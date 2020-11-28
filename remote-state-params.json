@@ -1,0 +1,130 @@
+[
+    {
+        "ParameterKey": "iamPolicyDesc",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamPolicyName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamRoleName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamRoleDesc",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamRoleSvc",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamRoleAction",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamMgdPolArn",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamMaxSesDur",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "envName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "regName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "roleName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamInstProfName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamGroupName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "iamUserName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsKeyDesc",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsKeyName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsEnable",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsRotation",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsPolicySid",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsPolicyAction",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsUsage",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "kmsPendingDays",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "bucketName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "boolTrue",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "boolFalse",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "s3Versioning",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "sseAlgo",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dynTblName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dynAttrName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dynAttrType",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dynBillMode",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "dynSchemaKeyType",
+        "ParameterValue": ""
+    }
+]

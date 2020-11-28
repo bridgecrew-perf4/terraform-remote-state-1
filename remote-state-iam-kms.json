@@ -1,0 +1,450 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This template creates an IAM role, IAM instance profile, IAM group, IAM user, and a KMS key.",
+    "Parameters": {
+        "iamPolicyDesc": {
+            "Type": "String"
+        },
+        "iamPolicyName": {
+            "Type": "String"
+        },
+        "iamRoleName": {
+            "Type": "String"
+        },
+        "iamRoleDesc": {
+            "Type": "String"
+        },
+        "iamRoleSvc": {
+            "Type": "String"
+        },
+        "iamRoleAction": {
+            "Type": "String"
+        },
+        "iamMgdPolArn": {
+            "Type": "String"
+        },
+        "iamMaxSesDur": {
+            "Type": "String"
+        },
+        "envName": {
+            "Type": "String"
+        },
+        "roleName": {
+            "Type": "String"
+        },
+        "iamInstProfName": {
+            "Type": "String"
+        },
+        "iamGroupName": {
+            "Type": "String"
+        },
+        "iamUserName": {
+            "Type": "String"
+        },
+        "kmsKeyDesc": {
+            "Type": "String"
+        },
+        "kmsKeyName": {
+            "Type": "String"
+        },
+        "kmsEnable": {
+            "Type": "String"
+        },
+        "kmsRotation": {
+            "Type": "String"
+        },
+        "kmsPolicySid": {
+            "Type": "String"
+        },
+        "kmsPolicyAction": {
+            "Type": "String"
+        },
+        "kmsUsage": {
+            "Type": "String"
+        },
+        "kmsPendingDays": {
+            "Type": "String"
+        },
+        "bucketName": {
+            "Type": "String"
+        },
+        "dynTblName": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "IamPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "Description": {
+                    "Ref": "iamPolicyDesc"
+                },
+                "ManagedPolicyName": {
+                    "Ref": "iamPolicyName"
+                },
+                "Groups": [
+                    {
+                        "Ref": "IamGroup"
+                    }
+                ],
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "dynamodb:GetItem",
+                                "dynamodb:PutItem",
+                                "dynamodb:DeleteItem"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:dynamodb:",
+                                        "*:*:table/",
+                                        {
+                                            "Ref": "dynTblName"
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "bucketName"
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PubObject"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "bucketName"
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "kms:Encrypt",
+                                "kms:Decrypt"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:kms:",
+                                        {
+                                            "Ref": "AWS::Region"
+                                        },
+                                        ":",
+                                        {
+                                            "Ref": "AWS::AccountId"
+                                        },
+                                        ":key/",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "KmsKey",
+                                                "KeyId"
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "IamRole"
+                    }
+                ]
+            },
+            "DependsOn": [
+                "KmsKey"
+            ]
+        },
+        "IamRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": {
+                    "Ref": "iamRoleName"
+                },
+                "Description": {
+                    "Ref": "iamRoleDesc"
+                },
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    {
+                                        "Ref": "iamRoleSvc"
+                                    }
+                                ]
+                            },
+                            "Action": [
+                                {
+                                    "Ref": "iamRoleAction"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "iamMgdPolArn"
+                    }
+                ],
+                "MaxSessionDuration": {
+                    "Ref": "iamMaxSesDur"
+                },
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "envName"
+                        }
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": {
+                            "Ref": "roleName"
+                        }
+                    }
+                ]
+            }
+        },
+        "IamInstProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "InstanceProfileName": {
+                    "Ref": "iamInstProfName"
+                },
+                "Roles": [
+                    {
+                        "Ref": "IamRole"
+                    }
+                ]
+            }
+        },
+        "IamGroup": {
+            "Type": "AWS::IAM::Group",
+            "Properties": {
+                "GroupName": {
+                    "Ref": "iamGroupName"
+                },
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "iamMgdPolArn"
+                    }
+                ]
+            }
+        },
+        "IamUser": {
+            "Type": "AWS::IAM::User",
+            "Properties": {
+                "UserName": {
+                    "Ref": "iamUserName"
+                },
+                "Groups": [
+                    {
+                        "Ref": "IamGroup"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "envName"
+                        }
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": {
+                            "Ref": "roleName"
+                        }
+                    }
+                ]
+            }
+        },
+        "KmsKey": {
+            "Type": "AWS::KMS::Key",
+            "Properties": {
+                "Description": {
+                    "Ref": "kmsKeyDesc"
+                },
+                "Enabled": {
+                    "Ref": "kmsEnable"
+                },
+                "EnableKeyRotation": {
+                    "Ref": "kmsRotation"
+                },
+                "KeyPolicy": {
+                    "Version": "2012-10-17",
+                    "Id": "CloudOrch-KMS-Key-Policy",
+                    "Statement": [
+                        {
+                            "Sid": {
+                                "Ref": "kmsPolicySid"
+                            },
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:iam::",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":root"
+                                        ]
+                                    ]
+                                }
+                            },
+                            "Action": {
+                                "Ref": "kmsPolicyAction"
+                            },
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "KeyUsage": {
+                    "Ref": "kmsUsage"
+                },
+                "PendingWindowInDays": {
+                    "Ref": "kmsPendingDays"
+                },
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "envName"
+                        }
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": {
+                            "Ref": "roleName"
+                        }
+                    }
+                ]
+            }
+        },
+        "KmsKeyAlias": {
+            "Type": "AWS::KMS::Alias",
+            "Properties": {
+                "AliasName": {
+                    "Ref": "kmsKeyName"
+                },
+                "TargetKeyId": {
+                    "Fn::GetAtt": [
+                        "KmsKey",
+                        "KeyId"
+                    ]
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "IamPolicyArn": {
+            "Value": {
+                "Ref": "IamPolicy"
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-IamPolicyArn"
+                }
+            }
+        },
+        "IamRoleArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "IamRole",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-IamRoleArn"
+                }
+            }
+        },
+        "IamInstProfileArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "IamInstProfile",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-IamInstProfileArn"
+                }
+            }
+        },
+        "IamGroupArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "IamGroup",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-IamGroupArn"
+                }
+            }
+        },
+        "IamUserArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "IamUser",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-IamUserArn"
+                }
+            }
+        },
+        "KmsKeyArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "KmsKey",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-KmsKeyArn"
+                }
+            }
+        }
+    }
+}

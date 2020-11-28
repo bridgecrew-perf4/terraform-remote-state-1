@@ -1,0 +1,237 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This is our orchestrator template.",
+    "Parameters": {
+        "iamPolicyDesc": {
+            "Type": "String"
+        },
+        "iamPolicyName": {
+            "Type": "String"
+        },
+        "iamRoleName": {
+            "Type": "String"
+        },
+        "iamRoleDesc": {
+            "Type": "String"
+        },
+        "iamRoleSvc": {
+            "Type": "String"
+        },
+        "iamRoleAction": {
+            "Type": "String"
+        },
+        "iamMgdPolArn": {
+            "Type": "String"
+        },
+        "iamMaxSesDur": {
+            "Type": "String"
+        },
+        "envName": {
+            "Type": "String"
+        },
+        "regName": {
+            "Type": "String"
+        },
+        "roleName": {
+            "Type": "String"
+        },
+        "iamInstProfName": {
+            "Type": "String"
+        },
+        "iamGroupName": {
+            "Type": "String"
+        },
+        "iamUserName": {
+            "Type": "String"
+        },
+        "kmsKeyDesc": {
+            "Type": "String"
+        },
+        "kmsKeyName": {
+            "Type": "String"
+        },
+        "kmsEnable": {
+            "Type": "String"
+        },
+        "kmsRotation": {
+            "Type": "String"
+        },
+        "kmsPolicySid": {
+            "Type": "String"
+        },
+        "kmsPolicyAction": {
+            "Type": "String"
+        },
+        "kmsUsage": {
+            "Type": "String"
+        },
+        "kmsPendingDays": {
+            "Type": "String"
+        },
+        "bucketName": {
+            "Type": "String"
+        },
+        "boolTrue": {
+            "Type": "String"
+        },
+        "boolFalse": {
+            "Type": "String"
+        },
+        "s3Versioning": {
+            "Type": "String"
+        },
+        "sseAlgo": {
+            "Type": "String"
+        },
+        "dynTblName": {
+            "Type": "String"
+        },
+        "dynAttrName": {
+            "Type": "String"
+        },
+        "dynAttrType": {
+            "Type": "String"
+        },
+        "dynBillMode": {
+            "Type": "String"
+        },
+        "dynSchemaKeyType": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "iamKmsStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": "https://bucket.s3.amazonaws.com/cloudformation/remotestate/remote-state-iam-kms.json",
+                "Parameters": {
+                    "iamPolicyDesc": {
+                        "Ref": "iamPolicyDesc"
+                    },
+                    "iamPolicyName": {
+                        "Ref": "iamPolicyName"
+                    },
+                    "iamRoleName": {
+                        "Ref": "iamRoleName"
+                    },
+                    "iamRoleDesc": {
+                        "Ref": "iamRoleDesc"
+                    },
+                    "iamRoleSvc": {
+                        "Ref": "iamRoleSvc"
+                    },
+                    "iamRoleAction": {
+                        "Ref": "iamRoleAction"
+                    },
+                    "iamMgdPolArn": {
+                        "Ref": "iamMgdPolArn"
+                    },
+                    "iamMaxSesDur": {
+                        "Ref": "iamMaxSesDur"
+                    },
+                    "envName": {
+                        "Ref": "envName"
+                    },
+                    "roleName": {
+                        "Ref": "roleName"
+                    },
+                    "iamInstProfName": {
+                        "Ref": "iamInstProfName"
+                    },
+                    "iamGroupName": {
+                        "Ref": "iamGroupName"
+                    },
+                    "iamUserName": {
+                        "Ref": "iamUserName"
+                    },
+                    "kmsKeyDesc": {
+                        "Ref": "kmsKeyDesc"
+                    },
+                    "kmsKeyName": {
+                        "Ref": "kmsKeyName"
+                    },
+                    "kmsEnable": {
+                        "Ref": "kmsEnable"
+                    },
+                    "kmsRotation": {
+                        "Ref": "kmsRotation"
+                    },
+                    "kmsPolicySid": {
+                        "Ref": "kmsPolicySid"
+                    },
+                    "kmsPolicyAction": {
+                        "Ref": "kmsPolicyAction"
+                    },
+                    "kmsUsage": {
+                        "Ref": "kmsUsage"
+                    },
+                    "kmsPendingDays": {
+                        "Ref": "kmsPendingDays"
+                    },
+                    "bucketName": {
+                        "Ref": "bucketName"
+                    },
+                    "dynTblName": {
+                        "Ref": "dynTblName"
+                    }
+                }
+            }
+        },
+        "dynamoDbS3Stack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": "https://bucket.s3.amazonaws.com/cloudformation/remotestate/remote-state-infra.json",
+                "Parameters": {
+                    "bucketName": {
+                        "Ref": "bucketName"
+                    },
+                    "boolTrue": {
+                        "Ref": "boolTrue"
+                    },
+                    "boolFalse": {
+                        "Ref": "boolFalse"
+                    },
+                    "s3Versioning": {
+                        "Ref": "s3Versioning"
+                    },
+                    "kmsArn": {
+                        "Fn::GetAtt": [
+                            "iamKmsStack",
+                            "Outputs.KmsKeyArn"
+                        ]
+                    },
+                    "sseAlgo": {
+                        "Ref": "sseAlgo"
+                    },
+                    "envName": {
+                        "Ref": "envName"
+                    },
+                    "regName": {
+                        "Ref": "regName"
+                    },
+                    "roleName": {
+                        "Ref": "roleName"
+                    },
+                    "dynTblName": {
+                        "Ref": "dynTblName"
+                    },
+                    "dynAttrName": {
+                        "Ref": "dynAttrName"
+                    },
+                    "dynAttrType": {
+                        "Ref": "dynAttrType"
+                    },
+                    "dynBillMode": {
+                        "Ref": "dynBillMode"
+                    },
+                    "dynSchemaKeyType": {
+                        "Ref": "dynSchemaKeyType"
+                    }
+                }
+            },
+            "DependsOn": [
+                "iamKmsStack"
+            ]
+        }
+    }
+}

@@ -1,0 +1,212 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "This CFN template will provision a S3 bucket, and a DynamoDB table.",
+    "Parameters": {
+        "bucketName": {
+            "Type": "String"
+        },
+        "boolTrue": {
+            "Type": "String"
+        },
+        "boolFalse": {
+            "Type": "String"
+        },
+        "s3Versioning": {
+            "Type": "String"
+        },
+        "kmsArn": {
+            "Type": "String"
+        },
+        "sseAlgo": {
+            "Type": "String"
+        },
+        "envName": {
+            "Type": "String"
+        },
+        "regName": {
+            "Type": "String"
+        },
+        "roleName": {
+            "Type": "String"
+        },
+        "dynTblName": {
+            "Type": "String"
+        },
+        "dynAttrName": {
+            "Type": "String"
+        },
+        "dynAttrType": {
+            "Type": "String"
+        },
+        "dynBillMode": {
+            "Type": "String"
+        },
+        "dynSchemaKeyType": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketName": {
+                    "Ref": "bucketName"
+                },
+                "PublicAccessBlockConfiguration": {
+                    "BlockPublicAcls": {
+                        "Ref": "boolTrue"
+                    },
+                    "BlockPublicPolicy": {
+                        "Ref": "boolTrue"
+                    },
+                    "IgnorePublicAcls": {
+                        "Ref": "boolFalse"
+                    },
+                    "RestrictPublicBuckets": {
+                        "Ref": "boolTrue"
+                    }
+                },
+                "VersioningConfiguration": {
+                    "Status": {
+                        "Ref": "s3Versioning"
+                    }
+                },
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "KMSMasterKeyID": {
+                                    "Ref": "kmsArn"
+                                },
+                                "SSEAlgorithm": {
+                                    "Ref": "sseAlgo"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "envName"
+                        }
+                    },
+                    {
+                        "Key": "Region",
+                        "Value": {
+                            "Ref": "regName"
+                        }
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": {
+                            "Ref": "roleName"
+                        }
+                    }
+                ]
+            }
+        },
+        "DynamoDbTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": {
+                    "Ref": "dynTblName"
+                },
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": {
+                            "Ref": "dynAttrName"
+                        },
+                        "AttributeType": {
+                            "Ref": "dynAttrType"
+                        }
+                    }
+                ],
+                "BillingMode": {
+                    "Ref": "dynBillMode"
+                },
+                "KeySchema": [
+                    {
+                        "AttributeName": {
+                            "Ref": "dynAttrName"
+                        },
+                        "KeyType": {
+                            "Ref": "dynSchemaKeyType"
+                        }
+                    }
+                ],
+                "SSESpecification": {
+                    "KMSMasterKeyId": {
+                        "Ref": "kmsArn"
+                    },
+                    "SSEEnabled": {
+                        "Ref": "boolTrue"
+                    },
+                    "SSEType": "KMS"
+                },
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "envName"
+                        }
+                    },
+                    {
+                        "Key": "Region",
+                        "Value": {
+                            "Ref": "regName"
+                        }
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": {
+                            "Ref": "roleName"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "BucketArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "S3Bucket",
+                    "Arn"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-BucketArn"
+                }
+            }
+        },
+        "BucketDomainName": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "S3Bucket",
+                    "DomainName"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-BucketDomainName"
+                }
+            }
+        },
+        "BucketRegionalDomainName": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "S3Bucket",
+                    "RegionalDomainName"
+                ]
+            },
+            "Export": {
+                "Name": {
+                    "Fn::Sub": "${AWS::StackName}-BucketRegionalDomainName"
+                }
+            }
+        }
+    }
+}
